@@ -1,0 +1,22 @@
+{
+  "name": "b25c365",
+  "version": "1.0.0",
+  "description": "Máster SAP BTP - Cloud Application Programming Model",
+  "repository": "",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^9.1.0",
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "^0.11.0",
+    "@cap-js/sqlite": "^2"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  }
+}

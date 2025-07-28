@@ -12,19 +12,19 @@ entity Products : cuid, managed {
         product       : String(8);
         productName   : String(80);
         description   : LargeString;
-        category      : Association to Categories;
-        subCategory   : Association to SubCategories;
-        statu         : Association to Status; // statu statu_code
+        category      : Association to Categories;      // category & category_ID
+        subCategory   : Association to SubCategories;   // subCategory & subCategory_ID
+        statu         : Association to Status;          // statu statu_code
         price         : Decimal(8, 2);
         rating        : Decimal(3, 2);
         currency      : String;
         detail        : Association to ProductDetails; //detail detail_ID:
         supplier      : Association to Suppliers;
-        toReviews     : Association to Reviews
+        toReviews     : Association to many Reviews
                                 on toReviews.product = $self;
-        toInventories : Association to Inventories
+        toInventories : Association to many Inventories
                                 on toInventories.product = $self;
-        toSales       : Association to Sales
+        toSales       : Association to many Sales
                                 on toSales.product = $self;
 };
 

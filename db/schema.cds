@@ -3,28 +3,31 @@ namespace com.logaligroup;
 using {
         cuid,
         managed,
-        sap.common.CodeList
+        sap.common.CodeList,
+        sap.common.Currencies
 } from '@sap/cds/common';
 
-type decimal : Decimal(5, 3);
+type decimal : Decimal(6, 3);
 
 entity Products : cuid, managed {
+        image         : LargeBinary @Core.MediaType: imageType;
+        imageType     : String      @Core.IsMediaType;
         product       : String(8);
         productName   : String(80);
         description   : LargeString;
-        category      : Association to Categories;      // category & category_ID
-        subCategory   : Association to SubCategories;   // subCategory & subCategory_ID
-        statu         : Association to Status;          // statu statu_code
+        category      : Association to Categories; // category & category_ID
+        subCategory   : Association to SubCategories; // subCategory & subCategory_ID
+        statu         : Association to Status; // statu statu_code
         price         : Decimal(8, 2);
         rating        : Decimal(3, 2);
-        currency      : String;
-        detail        : Association to ProductDetails; //detail detail_ID:
+        currency      : Association to Currencies; //currency_code
+        detail        : Composition of ProductDetails; //detail detail_ID:
         supplier      : Association to Suppliers;
         toReviews     : Association to many Reviews
                                 on toReviews.product = $self;
-        toInventories : Association to many Inventories
+        toInventories : Composition of many Inventories
                                 on toInventories.product = $self;
-        toSales       : Association to many Sales
+        toSales       : Composition of many Sales
                                 on toSales.product = $self;
 };
 
@@ -50,10 +53,10 @@ entity Reviews : cuid {
 };
 
 entity Inventories : cuid {
-        stockNumber : String(7);
+        stockNumber : String(11);
         department  : Association to Departments;
-        min         : Integer;
-        max         : Integer;
+        min         : Integer default 0;
+        max         : Integer default 100;
         target      : Integer;
         quantity    : Decimal(4, 3);
         baseUnit    : String default 'EA';

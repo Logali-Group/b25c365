@@ -6,15 +6,17 @@ using from './annotations-reviews';
 using from './annotations-inventories';
 using from './annotations-sales';
 
+annotate services.Products with @odata.draft.enabled;
 
 annotate services.Products with {
+    image       @title: 'Image'     @UI.IsImage;
     product     @title: 'Product';
     productName @title: 'Product Name';
-    description @title: 'Description';
+    description @title: 'Description' @UI.MultiLineText;
     category    @title: 'Category';
     subCategory @title: 'Sub-Category';
     statu       @title: 'Statu';
-    price       @title: 'Price'     @Measures.ISOCurrency: currency;
+    price       @title: 'Price'     @Measures.ISOCurrency: currency_code;
     rating      @title: 'Average Rating';
     currency    @title: 'Currency'  @Common.IsCurrency;
     supplier    @title: 'Supplier';
@@ -75,6 +77,15 @@ annotate services.Products with {
 
 
 annotate services.Products with @(
+    Common.SideEffects: {
+        $Type : 'Common.SideEffectsType',
+        SourceProperties : [
+            supplier_ID
+        ],
+        TargetEntities : [
+            supplier
+        ]
+    },
     Capabilities.FilterRestrictions: {
         $Type                       : 'Capabilities.FilterRestrictionsType',
         FilterExpressionRestrictions: [{
@@ -105,6 +116,10 @@ annotate services.Products with @(
         },
     },
     UI.LineItem                    : [
+        {
+            $Type: 'UI.DataField',
+            Value: image,
+        },
         {
             $Type: 'UI.DataField',
             Value: product
@@ -162,6 +177,10 @@ annotate services.Products with @(
         Value        : price,
         Visualization: #Number
     },
+    UI.FieldGroup #Group           : {
+        $Type: 'UI.FieldGroupType',
+        Data : [{Value: image}]
+    },
     UI.FieldGroup #GroupA          : {
         $Type: 'UI.FieldGroupType',
         Data : [
@@ -201,10 +220,31 @@ annotate services.Products with @(
             $Type      : 'UI.DataField',
             Value      : statu_code,
             Criticality: statu.criticality,
-            Label      : ''
+            Label      : '',
+            ![@Common.FieldControl] : {
+                $edmJson: {
+                    $If:[
+                        {
+                            $Eq: [
+                                {
+                                    $Path: 'IsActiveEntity'
+                                },
+                                false
+                            ]
+                        },
+                        1,
+                        3
+                    ]
+                }
+            }
         }],
     },
     UI.HeaderFacets                : [
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target: '@UI.FieldGroup#Group',
+            Label : '',
+        },
         {
             $Type : 'UI.ReferenceFacet',
             Target: '@UI.FieldGroup#GroupA',
@@ -256,19 +296,19 @@ annotate services.Products with @(
             $Type : 'UI.ReferenceFacet',
             Target: 'toReviews/@UI.LineItem',
             Label : 'Reviews',
-            ID: 'ToReviews'
+            ID    : 'ToReviews'
         },
         {
             $Type : 'UI.ReferenceFacet',
             Target: 'toInventories/@UI.LineItem',
             Label : 'Inventories',
-            ID: 'ToInventories'
+            ID    : 'ToInventories'
         },
         {
             $Type : 'UI.ReferenceFacet',
             Target: 'toSales/@UI.Chart',
             Label : 'Sales',
-            ID: 'ToSales'
+            ID    : 'ToSales'
         }
     ]
 );

@@ -8,6 +8,22 @@ annotate service.Reviews with {
 };
 
 annotate service.Reviews with @(
+    UI.HeaderInfo: {
+        $Type : 'UI.HeaderInfoType',
+        TypeName : 'Review',
+        TypeNamePlural : 'Reviews',
+        Title : {
+            Value : product.productName
+        },
+        Description : {
+            Value : product.product
+        },
+    },
+    UI.DataPoint : {
+        $Type : 'UI.DataPointType',
+        Value : rating,
+        Visualization : #Rating
+    },
     UI.LineItem  : [
         {
             $Type : 'UI.DataField',
@@ -18,8 +34,13 @@ annotate service.Reviews with @(
             Value : user
         },
         {
-            $Type : 'UI.DataField',
-            Value : rating
+            $Type : 'UI.DataFieldForAnnotation',
+            Target : '@UI.DataPoint',
+            Label : 'Rating',
+            ![@HTML5.CssDefaults] : {
+                $Type : 'HTML5.CssDefaultsType',
+                width : '10rem'
+            }
         },
         {
             $Type : 'UI.DataField',

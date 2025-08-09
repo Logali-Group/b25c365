@@ -3,7 +3,7 @@ using {com.logaligroup as entities} from '../db/schema';
 service ProductSRV {
 
     type dialog {
-        option: String(10);     //Suma / Resta
+        abc: String(10);     //Suma / Resta
         amount: Integer;        //Valor
     };
 
@@ -42,7 +42,7 @@ service ProductSRV {
         }
         action setStock(
             in: $self,
-            option : dialog:option,
+            option : dialog:abc,
             amount : dialog:amount
         )
     };

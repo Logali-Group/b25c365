@@ -1,12 +1,12 @@
 using {ProductSRV as service} from '../service';
 
 annotate service.dialog with {
-    option @title: 'Option' @mandatory;
+    abc @title: 'Option' @mandatory;
     amount @title : 'Amount' @mandatory;
 };
 
 annotate service.dialog with {
-    option @Common: {
+    abc @Common: {
         Text: option,
         TextArrangement : #TextOnly,
         ValueList : {

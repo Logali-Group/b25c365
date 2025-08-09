@@ -58,7 +58,7 @@ entity Inventories : cuid {
         min         : Integer default 0;
         max         : Integer default 100;
         target      : Integer;
-        quantity    : Decimal(4, 3);
+        quantity    : Decimal(6, 3);
         baseUnit    : String default 'EA';
         product     : Association to Products;
 };
@@ -111,4 +111,12 @@ entity SubCategories : cuid {
 
 entity Departments : cuid {
         department : String(40);
-}
+};
+
+
+entity Options : CodeList {
+        key code : String(10) enum {
+                A = 'Add';
+                D = 'Discount';
+        };
+};

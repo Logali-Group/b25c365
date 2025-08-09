@@ -47,6 +47,41 @@ module.exports = class ProductSRV extends cds.ApplicationService {
             req.data.stockNumber = newMax;
         });
 
+        this.on('setStock', async (req) => {
+
+            const productId = req.params[0].ID;
+            const inventiryId = req.params[1].ID;
+            const data = req.data; //Option & Amount
+
+            const object = await SELECT.one.from(Inventories).columns('quantity').where({ID: inventiryId}); //{quantity : XXX}
+            let newAmount = 0;
+            
+            if (data.option === 'A') {
+                newAmount = object.quantity + data.amount;
+
+                if (newAmount > 300) {
+                    await UPDATE(Products).set({statu_code: 'InStock'}).where({ID: productId});
+                }
+
+                await UPDATE(Inventories).set({quantity: newAmount}).where({ID: inventiryId});
+                return req.info(200, `The amount ${req.data.amount} has been added to the inventoy`);
+
+            } else if ( (object.quantity < data.amount ) ) {
+                return req.error(400, `There is no avalilability for the requested quantity`);
+            } else {
+                newAmount = object.quantity - data.amount;
+                if (newAmount > 0 && newAmount <= 300) {
+                    await  UPDATE(Products).set({statu_code: 'LowAvailability'}).where({ID: productId});
+                } else if (newAmount === 0) {
+                    await  UPDATE(Products).set({statu_code: 'OutOfStock'}).where({ID: productId});
+                }
+
+                await UPDATE(Inventories).set({quantity: newAmount}).where({ID: inventiryId});
+                return req.info(200, `The amount ${data.amount} has been removed the invenroty`);
+            }
+
+        });
+
 
         return super.init();
     }

@@ -62,6 +62,12 @@ annotate services.Inventories with @(
         {
             $Type: 'UI.DataField',
             Value: quantity
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action : 'ProductSRV.setStock',
+            Label : 'Set Stock',
+            Inline : true
         }
     ],
     UI.DataPoint #Bullet: {

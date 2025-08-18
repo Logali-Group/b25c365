@@ -12,11 +12,11 @@
             "db": {
                 "kind": "postgres",
                 "credentials": {
-                    "host":"",
-                    "port":"",
-                    "user":"",
-                    "password":"",
-                    "db":""
+                    "host":"localhost",
+                    "port":9000,
+                    "user":"logali",
+                    "password":"logali",
+                    "db":"products"
                 }
             }
         }

@@ -1,12 +1,33 @@
 const cds = require('@sap/cds');
-
+require('dotenv').config()
 
 module.exports = class ProductSRV extends cds.ApplicationService {
 
-    init () {
+    async init () {
 
-        const {Products, Inventories} = this.entities;
+        const {Products, Inventories, CustomersCloud, SuppliersCloud, BussinesPartnerOP, VH_Supplier} = this.entities;
+        const cloud = await cds.connect.to("API_BUSINESS_PARTNER");
+        const op = await cds.connect.to("API_BUSINESS_PARTNER_ONPREMISE");
 
+        this.on('READ', [BussinesPartnerOP, VH_Supplier], async (req) => {
+            return await op.tx(req).send({
+                query: req.query,
+                headers: {
+                    Authorization: process.env.AUTH
+                }
+            });
+        });
+
+        this.on('READ', [CustomersCloud, SuppliersCloud], async (req) => {
+            return await cloud.tx(req).send({
+                query: req.query,
+                headers: {
+                    apikey: process.env.APIKEY
+                }
+            });
+        });
+
+        //http://s4h22.sap4practice.com:8007/sap/opu/odata/sap/API_BUSINESS_PARTNER
 
         //before
         //on

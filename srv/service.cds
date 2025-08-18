@@ -1,4 +1,6 @@
 using {com.logaligroup as entities} from '../db/schema';
+using {API_BUSINESS_PARTNER as cloud} from './external/API_BUSINESS_PARTNER';
+using {API_BUSINESS_PARTNER_ONPREMISE as onpremise} from './external/API_BUSINESS_PARTNER_ONPREMISE';
 
 service ProductSRV {
 
@@ -47,6 +49,46 @@ service ProductSRV {
         )
     };
     entity Sales as projection on entities.Sales;
+
+    /** Remote - Entities */
+    @cds.persistence.exists
+    @cds.persistence.skip
+    entity CustomersCloud as projection on cloud.A_Customer {
+        key Customer,
+            CustomerFullName as FullName,
+            CustomerName as Name,
+            Supplier as Supplier,
+            County,
+            CityCode
+    };
+
+    @cds.persistence.exists
+    @cds.persistence.skip
+    entity SuppliersCloud as projection on cloud.A_Supplier {
+        key Supplier,
+            SupplierName,
+            SupplierFullName,
+            Customer
+    };
+    @cds.persistence.exists
+    @cds.persistence.skip    
+    entity BussinesPartnerOP as projection on onpremise.A_BusinessPartner {
+        key BusinessPartner,
+            Customer,
+            Supplier,
+            FirstName,
+            LastName
+    };
+
+    @cds.persistence.exists
+    @cds.persistence.skip
+    @readonly
+    entity VH_Supplier as projection on onpremise.A_Supplier {
+        key Supplier,
+            SupplierName,
+            SupplierFullName,
+            Customer
+    };
 
     /** Value Help */
     @readonly

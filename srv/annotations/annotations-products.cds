@@ -9,17 +9,18 @@ using from './annotations-sales';
 annotate services.Products with @odata.draft.enabled;
 
 annotate services.Products with {
-    image       @title: 'Image'     @UI.IsImage;
-    product     @title: 'Product';
-    productName @title: 'Product Name';
-    description @title: 'Description' @UI.MultiLineText;
-    category    @title: 'Category';
-    subCategory @title: 'Sub-Category';
-    statu       @title: 'Statu';
-    price       @title: 'Price'     @Measures.ISOCurrency: currency_code;
-    rating      @title: 'Average Rating';
-    currency    @title: 'Currency'  @Common.IsCurrency;
-    supplier    @title: 'Supplier';
+    image            @title: 'Image'        @UI.IsImage;
+    product          @title: 'Product';
+    productName      @title: 'Product Name';
+    description      @title: 'Description'  @UI.MultiLineText;
+    category         @title: 'Category';
+    subCategory      @title: 'Sub-Category';
+    statu            @title: 'Statu';
+    price            @title: 'Price'        @Measures.ISOCurrency: currency_code;
+    rating           @title: 'Average Rating';
+    currency         @title: 'Currency'     @Common.IsCurrency;
+    supplier         @title: 'Supplier';
+    supplierExternal @title: 'Supplier External';
 };
 
 annotate services.Products with {
@@ -37,6 +38,19 @@ annotate services.Products with {
                 $Type            : 'Common.ValueListParameterInOut',
                 LocalDataProperty: supplier_ID,
                 ValueListProperty: 'ID'
+            }]
+        }
+    };
+    supplierExternal @Common: {
+        Text           : supplierExternal.SupplierFullName,
+        TextArrangement: #TextOnly,
+        ValueList: {
+             $Type         : 'Common.ValueListType',
+             CollectionPath: 'VH_Supplier',
+            Parameters    : [{
+                $Type            : 'Common.ValueListParameterInOut',
+                LocalDataProperty: supplierExternal_Supplier,
+                ValueListProperty: 'Supplier'
             }]
         }
     };
@@ -77,14 +91,10 @@ annotate services.Products with {
 
 
 annotate services.Products with @(
-    Common.SideEffects: {
-        $Type : 'Common.SideEffectsType',
-        SourceProperties : [
-            supplier_ID
-        ],
-        TargetEntities : [
-            supplier
-        ]
+    Common.SideEffects             : {
+        $Type           : 'Common.SideEffectsType',
+        SourceProperties: [supplier_ID],
+        TargetEntities  : [supplier]
     },
     Capabilities.FilterRestrictions: {
         $Type                       : 'Capabilities.FilterRestrictionsType',
@@ -196,6 +206,10 @@ annotate services.Products with @(
                 $Type: 'UI.DataField',
                 Value: supplier_ID
             },
+            {
+                $Type: 'UI.DataField',
+                Value: supplierExternal_Supplier
+            }
         ],
     },
     UI.FieldGroup #GroupB          : {
@@ -217,26 +231,18 @@ annotate services.Products with @(
     UI.FieldGroup #GroupD          : {
         $Type: 'UI.FieldGroupType',
         Data : [{
-            $Type      : 'UI.DataField',
-            Value      : statu_code,
-            Criticality: statu.criticality,
-            Label      : '',
-            ![@Common.FieldControl] : {
-                $edmJson: {
-                    $If:[
-                        {
-                            $Eq: [
-                                {
-                                    $Path: 'IsActiveEntity'
-                                },
-                                false
-                            ]
-                        },
-                        1,
-                        3
-                    ]
-                }
-            }
+            $Type                  : 'UI.DataField',
+            Value                  : statu_code,
+            Criticality            : statu.criticality,
+            Label                  : '',
+            ![@Common.FieldControl]: {$edmJson: {$If: [
+                {$Eq: [
+                    {$Path: 'IsActiveEntity'},
+                    false
+                ]},
+                1,
+                3
+            ]}}
         }],
     },
     UI.HeaderFacets                : [

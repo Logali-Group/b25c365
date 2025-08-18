@@ -7,28 +7,31 @@ using {
         sap.common.Currencies
 } from '@sap/cds/common';
 
+using {API_BUSINESS_PARTNER_ONPREMISE as op} from '../srv/external/API_BUSINESS_PARTNER_ONPREMISE';
+
 type decimal : Decimal(6, 3);
 
 entity Products : cuid, managed {
-        image         : LargeBinary @Core.MediaType: imageType;
-        imageType     : String      @Core.IsMediaType;
-        product       : String(8);
-        productName   : String(80);
-        description   : LargeString;
-        category      : Association to Categories; // category & category_ID
-        subCategory   : Association to SubCategories; // subCategory & subCategory_ID
-        statu         : Association to Status; // statu statu_code
-        price         : Decimal(8, 2);
-        rating        : Decimal(3, 2);
-        currency      : Association to Currencies; //currency_code
-        detail        : Composition of ProductDetails; //detail detail_ID:
-        supplier      : Association to Suppliers;
-        toReviews     : Association to many Reviews
-                                on toReviews.product = $self;
-        toInventories : Composition of many Inventories
-                                on toInventories.product = $self;
-        toSales       : Composition of many Sales
-                                on toSales.product = $self;
+        image            : LargeBinary @Core.MediaType: imageType;
+        imageType        : String      @Core.IsMediaType;
+        product          : String(8);
+        productName      : String(80);
+        description      : LargeString;
+        category         : Association to Categories; // category & category_ID
+        subCategory      : Association to SubCategories; // subCategory & subCategory_ID
+        statu            : Association to Status; // statu statu_code
+        price            : Decimal(8, 2);
+        rating           : Decimal(3, 2);
+        currency         : Association to Currencies; //currency_code
+        detail           : Composition of ProductDetails; //detail detail_ID:
+        supplier         : Association to Suppliers;
+        supplierExternal : Association to op.A_Supplier; //supplierExternal & supplierExternal_Supplier
+        toReviews        : Association to many Reviews
+                                   on toReviews.product = $self;
+        toInventories    : Composition of many Inventories
+                                   on toInventories.product = $self;
+        toSales          : Composition of many Sales
+                                   on toSales.product = $self;
 };
 
 entity Suppliers : cuid {
@@ -116,7 +119,7 @@ entity Departments : cuid {
 
 entity Options : CodeList {
         key code : String(10) enum {
-                A = 'Add';
-                D = 'Discount';
-        };
+                    A = 'Add';
+                    D = 'Discount';
+            };
 };
